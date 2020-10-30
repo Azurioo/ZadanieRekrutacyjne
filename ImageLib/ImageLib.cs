@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -6,36 +7,46 @@ namespace ImageLib
 {
     public class ImageProcessing
     {
-        public Bitmap ToMainColors(Bitmap input)
-        {
-            var height = input.Height;
-            var width = input.Width;
 
-            for (var i = 0; i < height; i++)
+        private Bitmap img;
+
+        public ImageProcessing(Bitmap img)
+        {
+            this.img = img;
+        }
+        public ImageProcessing() { }
+        public Bitmap ToMainColors()
+        {
+            var height = img.Height;
+            var width = img.Width;
+
+            for (var i = 0; i < width; i++)
             {
-                for (var j = 0; j < width; j++)
+                for (var j = 0; j < height; j++)
                 {
-                    input.SetPixel(i, j, GetMainColor(input.GetPixel(i, j)));
+                    img.SetPixel(i, j, GetMainColor(img.GetPixel(i, j)));
                 }
             }
 
-            return input;
+            return img;
         }
 
-        public async Task<Bitmap> ToMainColorsTask(Bitmap input)
+        public void ToMainColorsAsync(object sender, DoWorkEventArgs e)
         {
-            var height = input.Height;
-            var width = input.Width;
+            var height = img.Height;
+            var width = img.Width;
 
-            for (var i = 0; i < height; i++)
+            for (var i = 0; i < width; i++)
             {
-                for (var j = 0; j < width; j++)
+                int progressPercentage = Convert.ToInt32(((double)i / width) * 100);
+                for (var j = 0; j < height; j++)
                 {
-                    input.SetPixel(i, j, await Task.FromResult(GetMainColor(input.GetPixel(i, j))));
+                    img.SetPixel(i, j, GetMainColor(img.GetPixel(i, j)));
                 }
+                (sender as BackgroundWorker).ReportProgress(progressPercentage);
             }
 
-            return input;
+            e.Result = img;
         }
 
         public Color GetMainColor(Color from)
