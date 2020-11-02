@@ -19,12 +19,12 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button FontSize="20" Margin="5 0 5 0" Grid.Column="0" Click="LoadButton_OnClick" Content="Load"/>
-                <Button FontSize="20" Margin="5 0 5 0" Grid.Column="1" Click="Async_OnClick" Content="Async"/>
-                <Button FontSize="20" Margin="5 0 5 0" Grid.Column="2" Click="Sync_OnClick" Content="Sync"/>
+                <Button FontSize="20" Margin="5 0 5 0" Grid.Column="0" Command="{Binding LoadImageFromFile}" Content="Load"/>
+                <Button FontSize="20" Margin="5 0 5 0" Grid.Column="1" Command="{Binding AsyncProcessImageCommand}" Content="Async"/>
+                <Button FontSize="20" Margin="5 0 5 0" Grid.Column="2" Command="{Binding SyncProcessImageCommand}" Content="Sync"/>
             </Grid>
             <ProgressBar Grid.Row="0" Height="30" Margin="10" Name="ProgressBar" Visibility="Hidden"/>
-            <Image Margin="5 10 5 10" Grid.Row="0" Name="Image" ></Image>
+            <Image Margin="5 10 5 10" Grid.Row="0" Source="{Binding Image}"></Image>
         </Grid>
     </Border>
 </Window>
