@@ -11,7 +11,7 @@ namespace ImageApp.Directory
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "Image files (*.jpg; *.png; *.bmp)|*.png;*.jpeg|All files (*.*)|*.*"
+                Filter = "Image files (*.jpg; *.png; *.bmp)|*.png;*.jpg;*.bmp|All files (*.*)|*.*"
             };
             try
             {
@@ -28,7 +28,7 @@ namespace ImageApp.Directory
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "Image files (*.jpg; *.png; *.bmp)|*.png;*.jpeg|All files (*.*)|*.*"
+                Filter = "Image files (*.jpg; *.png; *.bmp)|*.png;*.jpg;*.bmp|All files (*.*)|*.*"
             };
             saveFileDialog.ShowDialog();
             var encoder = new BmpBitmapEncoder();

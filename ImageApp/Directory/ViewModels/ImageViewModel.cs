@@ -70,7 +70,7 @@ namespace ImageApp.Directory.ViewModels
                 Image.Dispatcher.Invoke(() =>
                 {
                     Timer = watch.ElapsedMilliseconds + " ms";
-                    Image = temp.GetResult();
+                    Image = temp.GetImage();
                     SetCanExecuteToAllCommands(true);
                 });
             });
