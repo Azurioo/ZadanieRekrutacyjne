@@ -16,6 +16,19 @@ namespace ImageApp.Directory.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
 
+        public String mTimer = "None";
+        public String Timer
+        {
+            get { return "Last process time: " + mTimer; }
+            set
+            {
+                if (mTimer == value)
+                    return;
+                mTimer = value;
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Timer)));
+            }
+        }
+
         public BitmapSource mImage;
         public BitmapSource Image
         {
@@ -25,6 +38,7 @@ namespace ImageApp.Directory.ViewModels
                 if (mImage == value)
                     return;
                 mImage = value;
+                SetCanExecuteToProcessCommands(true);
                 PropertyChanged(this, new PropertyChangedEventArgs(nameof(Image)));
             }
         }
@@ -32,23 +46,30 @@ namespace ImageApp.Directory.ViewModels
         public ICommand SyncProcessImageCommand { get; set; }
         public ICommand AsyncProcessImageCommand { get; set; }
         public ICommand LoadImageFromFile { get; set; }
+        public ICommand SaveImageToFile { get; set; }
 
         public ImageViewModel()
         {
             SyncProcessImageCommand = new RelayCommand(SyncProcess);
             AsyncProcessImageCommand = new RelayCommand(AsyncProcess);
             LoadImageFromFile = new RelayCommand(GetImageFromFile);
+            SaveImageToFile = new RelayCommand(PostImageToFile);
+            SetCanExecuteToProcessCommands(false);
         }
 
         private void AsyncProcess()
         {
             var temp = new ImageProcessing(Image);
             SetCanExecuteToAllCommands(false);
+            Timer = "Processing...";
             Task.Run(async () =>
             {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 await temp.ToMainColorsAsync();
+                watch.Stop();
                 Image.Dispatcher.Invoke(() =>
                 {
+                    Timer = watch.ElapsedMilliseconds + " ms";
                     Image = temp.GetResult();
                     SetCanExecuteToAllCommands(true);
                 });
@@ -57,19 +78,34 @@ namespace ImageApp.Directory.ViewModels
 
         private void SyncProcess()
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             Image = new ImageProcessing(Image).ToMainColors();
+            watch.Stop();
+            Timer = watch.ElapsedMilliseconds + " ms";
         }
 
         private void GetImageFromFile()
         {
-            Image = FileStructure.GetImageFromFile();
+            BitmapSource temp = FileStructure.GetImageFromFile();
+            if (temp != null)
+                Image = temp;
+        }
+
+        private void PostImageToFile()
+        {
+            FileStructure.SaveImageToFile(Image);
         }
 
         private void SetCanExecuteToAllCommands(bool setTo)
         {
+            SetCanExecuteToProcessCommands(setTo);
+            LoadImageFromFile.Execute(setTo);
+        }
+
+        private void SetCanExecuteToProcessCommands(bool setTo)
+        {
             AsyncProcessImageCommand.Execute(setTo);
             SyncProcessImageCommand.Execute(setTo);
-            LoadImageFromFile.Execute(setTo);
         }
     }
 }

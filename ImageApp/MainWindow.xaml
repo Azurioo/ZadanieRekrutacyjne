@@ -11,10 +11,14 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="9*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="1">
+            <Image Margin="5 10 5 10" Grid.Row="0" Source="{Binding Image}"></Image>
+            <TextBox Grid.Row="1" Text="{Binding Timer}" TextAlignment="Center" FontSize="20" VerticalAlignment="Center"/>
+            <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -22,9 +26,8 @@
                 <Button FontSize="20" Margin="5 0 5 0" Grid.Column="0" Command="{Binding LoadImageFromFile}" Content="Load"/>
                 <Button FontSize="20" Margin="5 0 5 0" Grid.Column="1" Command="{Binding AsyncProcessImageCommand}" Content="Async"/>
                 <Button FontSize="20" Margin="5 0 5 0" Grid.Column="2" Command="{Binding SyncProcessImageCommand}" Content="Sync"/>
+                <Button FontSize="20" Margin="5 0 5 0" Grid.Column="3" Command="{Binding SaveImageToFile}" Content="Save"/>
             </Grid>
-            <ProgressBar Grid.Row="0" Height="30" Margin="10" Name="ProgressBar" Visibility="Hidden"/>
-            <Image Margin="5 10 5 10" Grid.Row="0" Source="{Binding Image}"></Image>
         </Grid>
     </Border>
 </Window>

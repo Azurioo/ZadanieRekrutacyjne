@@ -17,7 +17,7 @@ namespace ImageLib
 
         public ImageProcessing(BitmapSource source)
         {
-            this._img = ConvertToBitmap(source);
+            _img = ConvertToBitmap(source);
         }
         public ImageProcessing() { }
         public BitmapSource ToMainColors()
