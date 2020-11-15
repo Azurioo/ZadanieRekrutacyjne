@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics.Tracing;
 using System.Windows.Input;
 
 namespace ImageApp.Directory.ViewModels
 {
     class RelayCommand : ICommand
     {
-        private Action _action;
+        private readonly Action _action;
         private bool _execute = true;
         public bool CanExecute(object parameter)
         {

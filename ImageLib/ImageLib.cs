@@ -100,7 +100,7 @@ namespace ImageLib
             return Imaging.CreateBitmapSourceFromHBitmap(_img.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
-        public Bitmap ConvertToBitmap(BitmapSource bitmapSource)
+        private Bitmap ConvertToBitmap(BitmapSource bitmapSource)
         {
             var width = bitmapSource.PixelWidth;
             var height = bitmapSource.PixelHeight;

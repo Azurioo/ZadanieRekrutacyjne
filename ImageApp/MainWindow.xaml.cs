@@ -8,8 +8,8 @@ namespace ImageApp
         public MainWindow()
         {
             InitializeComponent();
-
-            this.DataContext = new ImageViewModel();
+            
+            DataContext = new ImageViewModel();
         }
     }
 }

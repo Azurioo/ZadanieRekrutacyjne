@@ -104,10 +104,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ImageLib\ImageLib.csproj">
-      <Project>{6b13450d-91d8-4d88-ba57-8ac1b901ca99}</Project>
+      <Project>{2d9d8388-ce52-49cf-953b-e468fe8969fe}</Project>
       <Name>ImageLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

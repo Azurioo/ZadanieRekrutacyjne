@@ -1,13 +1,6 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.ComponentModel;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using ImageLib;
 
 namespace ImageApp.Directory.ViewModels
@@ -16,28 +9,28 @@ namespace ImageApp.Directory.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
 
-        public String mTimer = "None";
-        public String Timer
+        private string _mTimer = "None";
+        public string Timer
         {
-            get { return "Last process time: " + mTimer; }
+            get => "Last process time: " + _mTimer;
             set
             {
-                if (mTimer == value)
+                if (_mTimer == value)
                     return;
-                mTimer = value;
+                _mTimer = value;
                 PropertyChanged(this, new PropertyChangedEventArgs(nameof(Timer)));
             }
         }
 
-        public BitmapSource mImage;
+        private BitmapSource _mImage;
         public BitmapSource Image
         {
-            get { return mImage; }
+            get => _mImage;
             set
             {
-                if (mImage == value)
+                if (_mImage == value)
                     return;
-                mImage = value;
+                _mImage = value;
                 SetCanExecuteToProcessCommands(true);
                 PropertyChanged(this, new PropertyChangedEventArgs(nameof(Image)));
             }
@@ -45,38 +38,35 @@ namespace ImageApp.Directory.ViewModels
 
         public ICommand SyncProcessImageCommand { get; set; }
         public ICommand AsyncProcessImageCommand { get; set; }
-        public ICommand LoadImageFromFile { get; set; }
-        public ICommand SaveImageToFile { get; set; }
+        public ICommand LoadImageFromFileCommand { get; set; }
+        public ICommand SaveImageToFileCommand { get; set; }
 
         public ImageViewModel()
         {
             SyncProcessImageCommand = new RelayCommand(SyncProcess);
             AsyncProcessImageCommand = new RelayCommand(AsyncProcess);
-            LoadImageFromFile = new RelayCommand(GetImageFromFile);
-            SaveImageToFile = new RelayCommand(PostImageToFile);
+            LoadImageFromFileCommand = new RelayCommand(GetImageFromFile);
+            SaveImageToFileCommand = new RelayCommand(PostImageToFile);
             SetCanExecuteToProcessCommands(false);
         }
 
-        private void AsyncProcess()
+        public async void AsyncProcess()
         {
             var temp = new ImageProcessing(Image);
             SetCanExecuteToAllCommands(false);
             Timer = "Processing...";
-            Task.Run(async () =>
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            await temp.ToMainColorsAsync();
+            watch.Stop();
+            Image.Dispatcher.Invoke(() =>
             {
-                var watch = System.Diagnostics.Stopwatch.StartNew();
-                await temp.ToMainColorsAsync();
-                watch.Stop();
-                Image.Dispatcher.Invoke(() =>
-                {
-                    Timer = watch.ElapsedMilliseconds + " ms";
-                    Image = temp.GetImage();
-                    SetCanExecuteToAllCommands(true);
-                });
+                Timer = watch.ElapsedMilliseconds + " ms";
+                Image = temp.GetImage();
+                SetCanExecuteToAllCommands(true);
             });
         }
 
-        private void SyncProcess()
+        public void SyncProcess()
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
             Image = new ImageProcessing(Image).ToMainColors();
@@ -86,7 +76,7 @@ namespace ImageApp.Directory.ViewModels
 
         private void GetImageFromFile()
         {
-            BitmapSource temp = FileStructure.GetImageFromFile();
+            var temp = FileStructure.GetImageFromFile();
             if (temp != null)
                 Image = temp;
         }
@@ -99,13 +89,14 @@ namespace ImageApp.Directory.ViewModels
         private void SetCanExecuteToAllCommands(bool setTo)
         {
             SetCanExecuteToProcessCommands(setTo);
-            LoadImageFromFile.Execute(setTo);
+            LoadImageFromFileCommand.Execute(setTo);
         }
 
         private void SetCanExecuteToProcessCommands(bool setTo)
         {
             AsyncProcessImageCommand.Execute(setTo);
             SyncProcessImageCommand.Execute(setTo);
+            SaveImageToFileCommand.Execute(setTo);
         }
     }
 }
